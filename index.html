@@ -98,10 +98,6 @@
       return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
     }
 
-    if (localStorage.getItem(AUTH_KEY) === PASSWORD_HASH) {
-      window.location.replace(TARGET);
-    }
-
     document.getElementById("gate-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const input = document.getElementById("password");
