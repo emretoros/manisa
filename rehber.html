@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kullanim Rehberi Yonu</title>
+</head>
+<body>
+  <script>
+    const AUTH_KEY = "manisa_gate_ok_v1";
+    const PASSWORD_HASH = "2fce39d04a9b9b1f0ced14137e7ea44bede403de06dfd34af1c636724335046b";
+    if (localStorage.getItem(AUTH_KEY) !== PASSWORD_HASH) {
+      window.location.replace("index.html");
+    } else {
+      window.location.replace("manisa_strateji_haritasi_kullanim_rehberi.pdf");
+    }
+  </script>
+</body>
+</html>

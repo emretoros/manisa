@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manisa Strateji Haritasi Giris</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3f1ea;
+      --panel: rgba(255,255,255,0.94);
+      --line: #d7d2c8;
+      --text: #1f2523;
+      --muted: #5c6763;
+      --accent: #184d47;
+      --accent-2: #2d7a6d;
+      --shadow: 0 20px 48px rgba(0,0,0,0.14);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: "Fira Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(24,77,71,0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(205,128,73,0.16), transparent 24%),
+        linear-gradient(135deg, #f6f3ec 0%, #ece9df 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+    }
+    .gate {
+      width: min(560px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 34px 34px 28px;
+      backdrop-filter: blur(10px);
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 34px;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+    }
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    input[type="password"] {
+      flex: 1;
+      min-width: 0;
+      padding: 15px 16px;
+      font: inherit;
+      border-radius: 14px;
+      border: 1px solid #c8d0cd;
+      outline: none;
+      background: #fff;
+    }
+    input[type="password"]:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 4px rgba(45,122,109,0.12);
+    }
+    button {
+      padding: 15px 20px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 120px;
+    }
+    button:hover { filter: brightness(1.04); }
+    .hint {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #5d635f;
+    }
+    .error {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #fff1f0;
+      border: 1px solid #e8b6b1;
+      color: #8b2e24;
+      font-size: 14px;
+    }
+    .foot {
+      margin-top: 26px;
+      padding-top: 16px;
+      border-top: 1px solid #e4dfd5;
+      font-size: 13px;
+      color: #68716d;
+    }
+  </style>
+</head>
+<body>
+  <main class="gate">
+    <div class="eyebrow">Erisim Girisi</div>
+    <h1>Manisa Strateji Haritasi</h1>
+    <p>Bu sayfa kamuya acik GitHub Pages uzerinde yayinlanmak uzere hazirlandi. Asagidaki parola ekrani gercek bir guvenlik katmani degil, yalnizca rastgele ziyaretleri filtrelemek icin istemci tarafli bir giris kapisidir.</p>
+    <p>Dogru parola girildiginde harita ve rehber ayni oturum boyunca acilir.</p>
+    <form id="gate-form" class="row">
+      <input id="password" type="password" placeholder="Parolayi girin" autocomplete="current-password" />
+      <button type="submit">Haritayi Ac</button>
+    </form>
+    <div id="error" class="error">Parola yanlis. Tekrar deneyin.</div>
+    <div class="hint">Not: Bu yontem gercek erisim guvenligi saglamaz. Guvenli koruma icin Netlify ya da Cloudflare Access gerekir.</div>
+    <div class="foot">Oturum acildiginda hedef sayfa: <strong>manisa_strateji_haritasi.html</strong></div>
+  </main>
+  <script>
+    const AUTH_KEY = "manisa_gate_ok_v1";
+    const PASSWORD_HASH = "2fce39d04a9b9b1f0ced14137e7ea44bede403de06dfd34af1c636724335046b";
+    const TARGET = "manisa_strateji_haritasi.html";
+
+    async function sha256(text) {
+      const data = new TextEncoder().encode(text);
+      const hash = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    if (localStorage.getItem(AUTH_KEY) === PASSWORD_HASH) {
+      window.location.replace(TARGET);
+    }
+
+    document.getElementById("gate-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const input = document.getElementById("password");
+      const error = document.getElementById("error");
+      const value = input.value || "";
+      const hashed = await sha256(value);
+      if (hashed === PASSWORD_HASH) {
+        localStorage.setItem(AUTH_KEY, PASSWORD_HASH);
+        window.location.replace(TARGET);
+        return;
+      }
+      error.style.display = "block";
+      input.select();
+    });
+  </script>
+</body>
+</html>
