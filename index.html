@@ -33,39 +33,18 @@
       padding: 32px;
     }
     .gate {
-      width: min(560px, 100%);
+      width: min(420px, 100%);
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 22px;
       box-shadow: var(--shadow);
-      padding: 34px 34px 28px;
+      padding: 24px;
       backdrop-filter: blur(10px);
-    }
-    .eyebrow {
-      display: inline-block;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
-    h1 {
-      margin: 0 0 12px;
-      font-size: 34px;
-      line-height: 1.08;
-      letter-spacing: -0.02em;
-    }
-    p {
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 17px;
-      line-height: 1.55;
     }
     .row {
       display: flex;
       gap: 12px;
-      margin-top: 24px;
+      margin-top: 0;
     }
     input[type="password"] {
       flex: 1;
@@ -81,6 +60,10 @@
       border-color: var(--accent-2);
       box-shadow: 0 0 0 4px rgba(45,122,109,0.12);
     }
+    input[type="password"].invalid {
+      border-color: #b54035;
+      box-shadow: 0 0 0 4px rgba(181,64,53,0.12);
+    }
     button {
       padding: 15px 20px;
       border: 0;
@@ -90,46 +73,19 @@
       font: inherit;
       font-weight: 700;
       cursor: pointer;
-      min-width: 120px;
+      min-width: 62px;
+      font-size: 24px;
+      line-height: 1;
     }
     button:hover { filter: brightness(1.04); }
-    .hint {
-      margin-top: 18px;
-      font-size: 14px;
-      color: #5d635f;
-    }
-    .error {
-      display: none;
-      margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: #fff1f0;
-      border: 1px solid #e8b6b1;
-      color: #8b2e24;
-      font-size: 14px;
-    }
-    .foot {
-      margin-top: 26px;
-      padding-top: 16px;
-      border-top: 1px solid #e4dfd5;
-      font-size: 13px;
-      color: #68716d;
-    }
   </style>
 </head>
 <body>
   <main class="gate">
-    <div class="eyebrow">Erisim Girisi</div>
-    <h1>Manisa Strateji Haritasi</h1>
-    <p>Bu sayfa kamuya acik GitHub Pages uzerinde yayinlanmak uzere hazirlandi. Asagidaki parola ekrani gercek bir guvenlik katmani degil, yalnizca rastgele ziyaretleri filtrelemek icin istemci tarafli bir giris kapisidir.</p>
-    <p>Dogru parola girildiginde harita ve rehber ayni oturum boyunca acilir.</p>
     <form id="gate-form" class="row">
-      <input id="password" type="password" placeholder="Parolayi girin" autocomplete="current-password" />
-      <button type="submit">Haritayi Ac</button>
+      <input id="password" type="password" placeholder="Şifreyi girin" autocomplete="current-password" />
+      <button type="submit" aria-label="Giris">→</button>
     </form>
-    <div id="error" class="error">Parola yanlis. Tekrar deneyin.</div>
-    <div class="hint">Not: Bu yontem gercek erisim guvenligi saglamaz. Guvenli koruma icin Netlify ya da Cloudflare Access gerekir.</div>
-    <div class="foot">Oturum acildiginda hedef sayfa: <strong>manisa_strateji_haritasi.html</strong></div>
   </main>
   <script>
     const AUTH_KEY = "manisa_gate_ok_v1";
@@ -149,7 +105,6 @@
     document.getElementById("gate-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const input = document.getElementById("password");
-      const error = document.getElementById("error");
       const value = input.value || "";
       const hashed = await sha256(value);
       if (hashed === PASSWORD_HASH) {
@@ -157,7 +112,9 @@
         window.location.replace(TARGET);
         return;
       }
-      error.style.display = "block";
+      input.classList.remove("invalid");
+      void input.offsetWidth;
+      input.classList.add("invalid");
       input.select();
     });
   </script>
